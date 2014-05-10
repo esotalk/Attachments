@@ -12,7 +12,10 @@ ET::$pluginInfo["Attachments"] = array(
 	"authorEmail" => "support@esotalk.org",
 	"authorURL" => "http://esotalk.org",
 	"license" => "GPLv2",
-	"priority" => 0
+	"priority" => 0,
+	"dependencies" => array(
+		"esoTalk" => "1.0.0g4"
+	)
 );
 
 class ETPlugin_Attachments extends ETPlugin {
