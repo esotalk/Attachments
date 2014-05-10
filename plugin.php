@@ -287,6 +287,42 @@ class ETPlugin_Attachments extends ETPlugin {
 		}
 	}
 
+	// Hook onto ConversationModel::deleteBefore and delete attachments for all posts in a list of conversations.
+	public function handler_conversationModel_deleteBefore($sender, $sql, $ids)
+	{
+		$model = ET::getInstance("attachmentModel");
+
+		// Create a subquery to get all post IDs for these conversations.
+		$postIds = ET::SQL()
+			->select("postId")
+			->from("post")
+			->where("conversationId IN (:conversationIds)")
+			->bind(":conversationIds", $ids)
+			->get();
+
+		// Get all attachments for all posts in these conversations, as well as all draft attachments for these conversations.
+		$attachments = ET::SQL()
+			->select("*")
+			->from("attachment")
+			->where("draftConversationId IN (:conversationIds) OR postId IN ($postIds)")
+			->bind(":conversationIds", $ids)
+			->exec()
+			->allRows("attachmentId");
+
+		// Delete them from the database.
+		ET::SQL()
+			->delete()
+			->from("attachment")
+			->where("attachmentId IN (:attachmentIds)")
+			->bind(":attachmentIds", array_keys($attachments))
+			->exec();
+
+		// Delete all of these attachments from the filesystem.
+		foreach ($attachments as $attachment) {
+			$model->removeFile($attachment);
+		}
+	}
+
 	// Construct and process the settings form.
 	public function settings($sender)
 	{
