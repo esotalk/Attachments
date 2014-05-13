@@ -310,16 +310,18 @@ class ETPlugin_Attachments extends ETPlugin {
 			->allRows("attachmentId");
 
 		// Delete them from the database.
-		ET::SQL()
+		if (!empty($attachments)) {
+			ET::SQL()
 			->delete()
 			->from("attachment")
 			->where("attachmentId IN (:attachmentIds)")
 			->bind(":attachmentIds", array_keys($attachments))
 			->exec();
 
-		// Delete all of these attachments from the filesystem.
-		foreach ($attachments as $attachment) {
-			$model->removeFile($attachment);
+			// Delete all of these attachments from the filesystem.
+			foreach ($attachments as $attachment) {
+				$model->removeFile($attachment);
+			}
 		}
 	}
 
