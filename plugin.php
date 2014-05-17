@@ -257,7 +257,7 @@ class ETPlugin_Attachments extends ETPlugin {
 		$model = ET::getInstance("attachmentModel");
 
 		// Get the attachments for this conversation that are being stored in the session.
-		$attachments = $model->extractFromSession(ET::$controller->controllerMethod == "start" ? "c0" : "c".$conversation["conversationId"]);
+		$attachments = $model->extractFromSession("c".($conversation["conversationId"] ?: 0));
 
 		// If we're discarding the draft, remove the attachments from the session/filesystem/database.
 		if ($draft === null) {
@@ -317,11 +317,11 @@ class ETPlugin_Attachments extends ETPlugin {
 		// Delete them from the database.
 		if (!empty($attachments)) {
 			ET::SQL()
-			->delete()
-			->from("attachment")
-			->where("attachmentId IN (:attachmentIds)")
-			->bind(":attachmentIds", array_keys($attachments))
-			->exec();
+				->delete()
+				->from("attachment")
+				->where("attachmentId IN (:attachmentIds)")
+				->bind(":attachmentIds", array_keys($attachments))
+				->exec();
 
 			// Delete all of these attachments from the filesystem.
 			foreach ($attachments as $attachment) {
