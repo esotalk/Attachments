@@ -115,11 +115,16 @@ class ETPlugin_Attachments extends ETPlugin {
 	// When we render the reply box, add the attachments area to the bottom of it.
 	public function handler_conversationController_renderReplyBox($sender, &$formatted, $conversation)
 	{
+		$model = ET::getInstance("attachmentModel");
+
+		// Clear attachment session data for this conversation.
+		$model->extractFromSession("c".($conversation["conversationId"] ?: "0"));
+
 		// Get "draft" attachments for this member/conversation.
 		$sql = ET::SQL()
 			->where("draftMemberId", ET::$session->userId)
 			->where("draftConversationId", $conversation["conversationId"]);
-		$attachments = ET::getInstance("attachmentModel")->getWithSQL($sql);
+		$attachments = $model->getWithSQL($sql);
 
 		$this->appendEditAttachments($sender, $formatted, $attachments);
 	}
