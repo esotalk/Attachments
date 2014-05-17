@@ -209,7 +209,6 @@ class AttachmentController extends ETController {
 
 		$model = ET::getInstance("attachmentModel");
 		$attachments = $model->extractFromSession("p".$postId);
-		print_r($attachments);
 		foreach ($attachments as $attachment) {
 			$model->removeFile($attachment);
 		}
