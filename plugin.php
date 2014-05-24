@@ -32,6 +32,7 @@ class ETPlugin_Attachments extends ETPlugin {
 			->column("draftMemberId", "int(11) unsigned")
 			->column("draftConversationId", "int(11) unsigned")
 			->key("attachmentId", "primary")
+			->key("filename")
 			->exec(false);
 
 		// Make the uploads/attachments folder, and put in an index.html to prevent directory listing
@@ -72,11 +73,12 @@ class ETPlugin_Attachments extends ETPlugin {
 			$extension = pathinfo($attachment["filename"], PATHINFO_EXTENSION);
 			$url = URL("attachment/".$attachment["attachmentId"]."_".$attachment["filename"]);
 			$filename = sanitizeHTML($attachment["filename"]);
+			$displayFilename = ET::formatter()->init($filename)->highlight(ET::$session->get("highlight"))->get();
 
 			// For images, either show them directly or show a thumbnail.
 			if (in_array($extension, array("jpg", "jpeg", "png", "gif"))) {
 				if ($expanded) return "<span class='attachment attachment-image'><img src='".$url."' alt='".$filename."' title='".$filename."'></span>";
-				else return "<a href='".$url."' class='attachment attachment-image' target='_blank'><img src='".URL("attachment/thumb/".$attachment["attachmentId"])."' alt='".$filename."' title='".$filename."'><span class='filename'>".$filename."</span></a>";
+				else return "<a href='".$url."' class='attachment attachment-image' target='_blank'><img src='".URL("attachment/thumb/".$attachment["attachmentId"])."' alt='".$filename."' title='".$filename."'><span class='filename'>".$displayFilename."</span></a>";
 			}
 
 			// Embed video.
@@ -98,7 +100,7 @@ class ETPlugin_Attachments extends ETPlugin {
 				"gz" => "archive"
 			);
 			$icon = isset($icons[$extension]) ? $icons[$extension] : "file";
-			return "<a href='".$url."' class='attachment' target='_blank'><i class='icon-$icon'></i><span class='filename'>".$filename."</span></a>";
+			return "<a href='".$url."' class='attachment' target='_blank'><i class='icon-$icon'></i><span class='filename'>".$displayFilename."</span></a>";
 		}
 	}
 
@@ -361,5 +363,43 @@ class ETPlugin_Attachments extends ETPlugin {
 
 		$sender->data("attachmentsSettingsForm", $form);
 		return $this->view("settings");
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Searching for Attachments
+	|--------------------------------------------------------------------------
+	*/
+
+	// Hook onto PostModel::whereSearch (called when searching within a conversation) 
+	// and modify the normal fulltext MATCH condition to also match posts which
+	// contain matching attachments.
+	public function handler_postModel_whereSearch($sender, $sql, $search)
+	{
+		foreach ($sql->where as &$condition) {
+			if (strpos(ltrim($condition, "("), "MATCH") === 0) {
+				$q = $this->fulltextQuery($search)->select("postId")->get();
+				$condition = "($condition OR postId IN (".$q."))";
+				break;
+			}
+		}
+	}
+
+	// Hook onto SearchModel::fulltext (called when searching for conversations) and
+	// modify the normal fulltext MATCH condition to also match posts which contain
+	// matching tasks.
+	public function handler_searchModel_fulltext($sender, $sql, $fulltext)
+	{
+		$search = implode(" ", $fulltext);
+		$this->handler_postModel_whereSearch($sender, $sql, $search);
+	}
+
+	// Produce a query which finds tasks which match a given search phrase.
+	protected function fulltextQuery($search)
+	{
+		return ET::SQL()
+			->from("attachment")
+			->where("filename LIKE :search")
+			->bind(":search", "%".$search."%");
 	}
 }
