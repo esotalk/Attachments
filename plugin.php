@@ -76,7 +76,7 @@ class ETPlugin_Attachments extends ETPlugin {
 			$displayFilename = ET::formatter()->init($filename)->highlight(ET::$session->get("highlight"))->get();
 
 			// For images, either show them directly or show a thumbnail.
-			if (in_array($extension, array("jpg", "jpeg", "png", "gif"))) {
+			if (in_array($extension, array("jpg", "jpeg", "png", "gif", "JPG", "JPEG", "PNG", "GIF"))) {
 				if ($expanded) return "<span class='attachment attachment-image'><img src='".$url."' alt='".$filename."' title='".$filename."'></span>";
 				else return "<a href='".$url."' class='attachment attachment-image' target='_blank'><img src='".URL("attachment/thumb/".$attachment["attachmentId"])."' alt='".$filename."' title='".$filename."'><span class='filename'>".$displayFilename."</span></a>";
 			}
