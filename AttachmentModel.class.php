@@ -143,7 +143,7 @@ class AttachmentModel extends ETModel {
 	{
 		$inserts = array();
 		foreach ($attachments as $id => $attachment)
-			$inserts[] = array_merge(array($id, $attachment["name"], $attachment["secret"]), array_values($keys));
+			$inserts[] = array_merge(array($id, strtolower($attachment["name"]), $attachment["secret"]), array_values($keys));
 
 		ET::SQL()
 			->insert("attachment")
