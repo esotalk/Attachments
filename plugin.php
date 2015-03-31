@@ -70,7 +70,7 @@ class ETPlugin_Attachments extends ETPlugin {
 		 */
 		function formatAttachment($attachment, $expanded = false)
 		{
-			$extension = pathinfo($attachment["filename"], PATHINFO_EXTENSION);
+			$extension = strtolower(pathinfo($attachment["filename"], PATHINFO_EXTENSION));
 			$url = URL("attachment/".$attachment["attachmentId"]."_".$attachment["filename"]);
 			$filename = sanitizeHTML($attachment["filename"]);
 			$displayFilename = ET::formatter()->init($filename)->highlight(ET::$session->get("highlight"))->get();
