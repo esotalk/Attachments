@@ -20,6 +20,9 @@ class qqFileUploader {
      * Get the original filename
      */
     public function getName(){
+    	if (isset($_REQUEST['qqblobname']))
+            return $_REQUEST['qqblobname'];
+    	
         if (isset($_REQUEST['qqfilename']))
             return $_REQUEST['qqfilename'];
 
