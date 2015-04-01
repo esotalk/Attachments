@@ -16,6 +16,10 @@ $(function() {
 					postId: postId == "reply" ? (ETConversation.id ? "c"+ETConversation.id : "c0") : postId
 				}
 			},
+			paste:{
+                	defaultName: 'pasted_image',
+        	 	targetElement: $post.find('textarea[name="content"]')[0]
+            		},
 			callbacks: {
 				onSubmit: function(id, fileName) {
 					$attachments.append('<li id="file-'+postId+'-' + id + '"></li>');
