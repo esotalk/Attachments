@@ -9,7 +9,7 @@ Allows users to attach files to their posts.
 	cd ESOTALK_DIR/addons/plugins/
 	git clone git@github.com:esotalk/Attachments.git Attachments
 
-Navigate to the the admin/plugins page and activate the Attachments plugin.
+Navigate to the admin/plugins page and activate the Attachments plugin.
 
 ## Translation
 
