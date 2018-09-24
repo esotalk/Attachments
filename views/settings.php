@@ -19,13 +19,13 @@ $form = $data["attachmentsSettingsForm"];
 <ul class='form'>
 
 <li>
-<label>Allowed file types</label>
+<label><?php echo T("Allowed file types"); ?></label>
 <?php echo $form->input("allowedFileTypes", "text"); ?>
 <small><?php echo T("Enter file extensions separated by a space. Leave blank to allow all file types."); ?></small>
 </li>
 
 <li>
-<label>Max file size</label>
+<label><?php echo T("Max file size"); ?></label>
 <?php echo $form->input("maxFileSize", "text"); ?>
 <small><?php echo T("In bytes. Leave blank for no limit."); ?></small>
 </li>

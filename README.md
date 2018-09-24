@@ -19,3 +19,6 @@ Create `definitions.Attachments.php` in your language pack with the following de
 	$definitions["Drop files to upload"] = "Drop files to upload";
 	$definitions["Embed in post"] = "Embed in post";
 	$definitions["message.attachmentNotFound"] = "For some reason this attachment cannot be viewed. It may not exist, or you may not have permission to view it.";
+	$definitions["Enter file extensions separated by a space. Leave blank to allow all file types."] = "Enter file extensions separated by a space. Leave blank to allow all file types.";
+	$definitions["Allowed file types"] = "Allowed file types";
+	
